@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct {
+    char estado[30];
+    int codigo;
+    char nome[50];
+    int populacao;
+    float area;
+    float pib;
+    int pontosTuristicos;
+} CartaCidade;
+
+void exibirCarta(CartaCidade carta) {
+    printf("\n📍 Carta da Cidade:\n");
+    printf("Estado: %s\n", carta.estado);
+    printf("Código: %d\n", carta.codigo);
+    printf("Cidade: %s\n", carta.nome);
+    printf("População: %d habitantes\n", carta.populacao);
+    printf("Área: %.2f km²\n", carta.area);
+    printf("PIB: R$ %.2f bilhões\n", carta.pib);
+    printf("Pontos Turísticos: %d\n", carta.pontosTuristicos);
+}
+
+float pegarValor(CartaCidade c, int atributo) {
+    switch(atributo) {
+        case 1: return c.populacao;
+        case 2: return c.area;
+        case 3: return c.pib;
+        case 4: return c.pontosTuristicos;
+        default: return -1;
+    }
+}
+
+const char* nomeAtributo(int atributo) {
+    switch(atributo) {
+        case 1: return "População";
+        case 2: return "Área";
+        case 3: return "PIB";
+        case 4: return "Pontos Turísticos";
+        default: return "Desconhecido";
+    }
+}
+
+void compararCartas(CartaCidade c1, CartaCidade c2, int attr1, int attr2) {
+    float val1_c1 = pegarValor(c1, attr1);
+    float val2_c1 = pegarValor(c1, attr2);
+    float val1_c2 = pegarValor(c2, attr1);
+    float val2_c2 = pegarValor(c2, attr2);
+
+    int pontos_c1 = 0;
+    int pontos_c2 = 0;
+
+    pontos_c1 += (val1_c1 > val1_c2) ? 1 : (val1_c1 < val1_c2) ? 0 : 0;
+    pontos_c2 += (val1_c2 > val1_c1) ? 1 : (val1_c2 < val1_c1) ? 0 : 0;
+
+    pontos_c1 += (val2_c1 > val2_c2) ? 1 : (val2_c1 < val2_c2) ? 0 : 0;
+    pontos_c2 += (val2_c2 > val2_c1) ? 1 : (val2_c2 < val2_c1) ? 0 : 0;
+
+    printf("\n🔍 Comparando atributos: %s e %s\n", nomeAtributo(attr1), nomeAtributo(attr2));
+    printf("%s [%d ponto(s)] x %s [%d ponto(s)]\n", c1.nome, pontos_c1, c2.nome, pontos_c2);
+
+    if (pontos_c1 > pontos_c2)
+        printf("🏆 Vencedora: %s\n", c1.nome);
+    else if (pontos_c2 > pontos_c1)
+        printf("🏆 Vencedora: %s\n", c2.nome);
+    else
+        printf("⚖️ Empate técnico!\n");
+}
+
+int main() {
+    CartaCidade carta1, carta2;
+    int attr1, attr2;
+
+    // Cadastro da Carta 1
+    printf("=== Cadastro da Carta 1 ===\n");
+    printf("Estado: "); fgets(carta1.estado, sizeof(carta1.estado), stdin);
+    carta1.estado[strcspn(carta1.estado, "\n")] = '\0';
+
+    printf("Código: "); scanf("%d", &carta1.codigo); getchar();
+    printf("Cidade: "); fgets(carta1.nome, sizeof(carta1.nome), stdin);
+    carta1.nome[strcspn(carta1.nome, "\n")] = '\0';
+
+    printf("População: "); scanf("%d", &carta1.populacao);
+    printf("Área (km²): "); scanf("%f", &carta1.area);
+    printf("PIB (em bilhões): "); scanf("%f", &carta1.pib);
+    printf("Pontos Turísticos: "); scanf("%d", &carta1.pontosTuristicos);
+    getchar();
+
+    // Cadastro da Carta 2
+    printf("\n=== Cadastro da Carta 2 ===\n");
+    printf("Estado: "); fgets(carta2.estado, sizeof(carta2.estado), stdin);
+    carta2.estado[strcspn(carta2.estado, "\n")] = '\0';
+
+    printf("Código: "); scanf("%d", &carta2.codigo); getchar();
+    printf("Cidade: "); fgets(carta2.nome, sizeof(carta2.nome), stdin);
+    carta2.nome[strcspn(carta2.nome, "\n")] = '\0';
+
+    printf("População: "); scanf("%d", &carta2.populacao);
+    printf("Área (km²): "); scanf("%f", &carta2.area);
+    printf("PIB (em bilhões): "); scanf("%f", &carta2.pib);
+    printf("Pontos Turísticos: "); scanf("%d", &carta2.pontosTuristicos);
+
+    // Exibir as cartas
+    exibirCarta(carta1);
+    exibirCarta(carta2);
+
+    // Menu de atributos
+    printf("\n=== MENU DE COMPARAÇÃO ===\n");
+    printf("1 - População\n2 - Área\n3 - PIB\n4 - Pontos Turísticos\n");
+
+    printf("Escolha o 1º atributo para comparar (1-4): ");
+    scanf("%d", &attr1);
+
+    printf("Escolha o 2º atributo para comparar (1-4): ");
+    scanf("%d", &attr2);
+
+    if (attr1 < 1 || attr1 > 4 || attr2 < 1 || attr2 > 4) {
+        printf("❌ Atributo(s) inválido(s). Finalizando.\n");
+        return 1;
+    }
+
+    compararCartas(carta1, carta2, attr1, attr2);
+
+    return 0;
+}
